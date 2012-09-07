@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vimeo - Tailgate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      pre.feed-data { height:300px; background: white; width:780px; margin:10px; overflow:auto; white-space:pre; word-wrap:normal; display:none; }
+    </style>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">
+            <img src="/img/vimeo_light_sm.png" style="margin-right:4px" style="margin:0 4px">
+            Tailgate
+          </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="/api">API</a></li>
+            <li><a href="<%= repo %>">Repository</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h1>Welcome to Tailgate</h1>
+        <p>Tailgate is a nodejs app that tails log files into websockets.  The channels listed below are available as feeds.</p>
+        <p>Use this <a href="#" id="example_code">example code</a> below to get started</p>
+        <pre contenteditable="true" style="display:none; background:white">
+&lt;script src="//<%= host %>/socket.io/socket.io.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+(function() {
+
+  // connect to a websocket
+  var socket = io.connect("http://<%= host %>"),
+    loggit = function(data) { console.log("got data:", data); };
+
+  // subscribe and bind events to new data
+  socket.emit("subscribe", "<%= dirs[0] %>:json");
+  socket.emit("subscribe", "<%= dirs[1] %>:raw");
+
+  socket.on("<%= dirs[0] %>:json", loggit);
+  socket.on("<%= dirs[1] %>:raw", loggit);
+
+  // when done unsubscribe and remove bind events
+  socket.emit("unsubscribe", "<%= dirs[0] %>:json");
+  socket.emit("unsubscribe", "<%= dirs[1] %>:raw");
+
+  socket.removeListener("<%= dirs[0] %>:json", loggit);
+  socket.removeListener("<%= dirs[1] %>:raw", loggit);
+
+})();
+&lt;/script&gt;</pre>
+      </div>
+
+      <div id="feed-list" class="hero-unit">
+        <h2>Feed List</h2>
+
+        <% if (dirs && dirs.length) { %>
+
+          <% dirs.forEach(function(dir) { %>
+
+            <div class="row">
+              <div class="span12">
+                <h2><a class="btn-small btn-info" href="#" data-dir="<%= dir %>">Show feed &raquo;</a> <%= dir %></h2>
+                <pre class="feed-data" contenteditable="true"></pre>
+              </div>
+            </div>
+
+          <% }) %>
+
+        <% } %>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; Vimeo 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery.1.7.2.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+      (function() {
+
+        var socket = io.connect(window.location.origin),
+          subscribed = {};
+
+
+        $('#feed-list a.btn-info').click(function(e) {
+
+          e.preventDefault();
+
+          var link = $(e.target),
+            channel = link.attr('data-dir') + ":raw",
+            feed_data = link.closest('.row').find('.feed-data');
+
+          // console.log(feed_data);
+
+          feed_data
+            .data('autoscroll', true)
+            .scroll(function(e) {
+              feed_data.data('autoscroll', feed_data[0].scrollHeight-feed_data[0].scrollTop === feed_data[0].clientHeight);
+            })
+
+          function append_data(data) {
+
+            // sanitize it
+            data = new Option(data).innerHTML;
+
+            feed_data.append(data);
+
+            lines = feed_data.text().split(/\n+/);
+
+            // truncate it at 1000 lines
+            if (lines.length > 1000) {
+              feed_data.text(lines.slice(-1000).join("\n")+"\n");
+            }
+
+            if (feed_data.data('autoscroll')) {
+              // auto scroll to the bottom unless user intervention
+              feed_data.scrollTop(99999);
+            }
+
+          }
+
+          if (channel in subscribed) {
+            socket.emit('unsubscribe', channel);
+            socket.removeListener(channel, append_data);
+            delete subscribed[channel];
+            feed_data.empty().hide();
+            link.html('Show feed &raquo;')
+          }
+          else {
+            socket.emit('subscribe', channel);
+            subscribed[channel] = true;
+            socket.on(channel, append_data);
+            feed_data.show();
+            link.html('Hide feed &raquo;')
+          }
+
+        });
+
+
+        $("#example_code").toggle(
+          function(e) { e.preventDefault(); $(e.target.parentNode.parentNode).find('pre').show(); },
+          function(e) { e.preventDefault(); $(e.target.parentNode.parentNode).find('pre').hide(); }
+        );
+
+
+      })();
+
+    </script>
+
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

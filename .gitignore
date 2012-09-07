@@ -1,0 +1,5 @@
+node_modules
+.DS_Store*
+startup/tailgate.pid
+startup/init.d.sh
+conf/conf.sh
