@@ -16,6 +16,7 @@ Tailgate exposes it's feeds as a simple pub/sub api through [socket.io](http://s
 	cd <install/directory>
 	git clone git@github.com:vimeo/tailgate.git
 	cd tailgate
+	npm install
 	cp conf/conf-dist.sh conf/conf.sh
 
 Edit `conf/conf.sh` to have the correct values for your installation.
