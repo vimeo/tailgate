@@ -1,0 +1,26 @@
+{
+  "name":        "tailgate",
+  "version":     "0.2.0",
+  "author":      "Vimeo LLC",
+  "keywords":    "tail tailgate websocket",
+  "description": "Tailing log files into websockets.",
+  "license":     "Apache 2.0",
+
+  "repository" : {
+    "type" : "git",
+    "url" : "git@github.com:vimeo/tailgate.git"
+  },
+
+  "engine": "node >= 0.6",
+
+  "dependencies": {
+    "coffee-script": "1.3.3",
+    "socket.io": "0.9.10",
+    "express": "3.0",
+    "ejs": "0.8.1",
+    "ldapjs": "0.5.4",
+    "sprintf": "0.1.1",
+    "log4js": "0.5.2"
+  }
+}
+
