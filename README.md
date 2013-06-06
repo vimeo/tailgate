@@ -4,9 +4,7 @@ Tailgate is a [nodejs](http://nodejs.org) app to pipe `tail -F` into websockets.
 
 It's a very simple way to have real-time access to your logs.  It uses [socket.io](http://socket.io) and [coffeescript](http://coffeescript.org), and is great for keeping track of [scribe logs](https://github.com/facebook/scribe).
 
-Live demo here:
-
-[![Tailgate Monitor](//github.com/vimeo/tailgate/raw/gh-pages/tailgate.png)](http://ec2-67-202-26-167.compute-1.amazonaws.com#%5B%7B%22channel%22%3A%22dev1%22%2C%22top%22%3A100%2C%22left%22%3A97%2C%22width%22%3A600%2C%22height%22%3A400%2C%22regex%22%3A%2216%3A31%3A57%22%7D%2C%7B%22channel%22%3A%22dev3%22%2C%22top%22%3A93%2C%22left%22%3A745%2C%22width%22%3A600%2C%22height%22%3A400%2C%22regex%22%3A%22%5C%5C%5B\(.%2B%3F\)%2C.%2B%3F\(0%5C%5C.%5C%5Cd%2B\)%22%7D%2C%7B%22channel%22%3A%22dev2%22%2C%22top%22%3A370%2C%22left%22%3A211%2C%22width%22%3A1058%2C%22height%22%3A422%2C%22regex%22%3A%22%22%7D%5D)
+![Tailgate](http://cl.ly/image/313P243p0L0N/Screen%20Shot%202012-09-10%20at%204.35.08%20PM.png)
 
 ## API
 Tailgate exposes its feeds as a simple pub/sub api through [socket.io](http://socket.io) connections making it easy to build visualizations or monitoring tools as simple web pages.
