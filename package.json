@@ -1,18 +1,15 @@
 {
-  "name":        "tailgate",
-  "version":     "0.2.0",
-  "author":      "Vimeo LLC",
-  "keywords":    "tail tailgate websocket",
+  "name": "tailgate",
+  "version": "0.2.0",
+  "author": "Vimeo LLC",
+  "keywords": "tail tailgate websocket",
   "description": "Tailing log files into websockets.",
-  "license":     "Apache 2.0",
-
-  "repository" : {
-    "type" : "git",
-    "url" : "git@github.com:vimeo/tailgate.git"
+  "license": "Apache 2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:vimeo/tailgate.git"
   },
-
   "engine": "node >= 0.10",
-
   "dependencies": {
     "coffee-script": "1.6.3",
     "socket.io": "0.9.16",
@@ -21,6 +18,13 @@
     "ldapjs": "0.6.3",
     "sprintf": "0.1.3",
     "log4js": "0.6.9"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-jshint": "~0.10.0",
+    "time-grunt": "~0.3.1",
+    "load-grunt-tasks": "~0.4.0",
+    "grunt-newer": "~0.7.0",
+    "grunt-contrib-watch": "~0.6.1"
   }
 }
-

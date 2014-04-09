@@ -7,7 +7,7 @@ export PIDFILE="$TAILGATE_DIR/startup/tailgate.pid"
 
 cd $TAILGATE_DIR
 
-# write out the pid 
+# write out the pid
 echo "$$" > $PIDFILE
 
 export PATH="$TAILGATE_DIR/node_modules/.bin:$PATH"
@@ -16,7 +16,7 @@ export PATH="$TAILGATE_DIR/node_modules/.bin:$PATH"
 . "$TAILGATE_DIR/conf/conf.sh"
 
 # start this party
-until "$TAILGATE_DIR/bin/tailgate.coffee" ; do
+until "$TAILGATE_DIR/bin/tailgate.js" ; do
         echo "Tailgate crashed with exit code $?. Restarting." >&2
         sleep 1
 done

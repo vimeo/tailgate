@@ -1,6 +1,7 @@
+/*global io, ImageData */
 (function() {
 
-    var ct = document.cookie.match("terminal_color=(.+?)(;|$)"),
+    var ct = document.cookie.match('terminal_color=(.+?)(;|$)'),
         TERMINAL_COLOR = ct && ct.length ? ct[1] : '17,187,17',  // green
         PADDING = 10;
 
@@ -246,9 +247,11 @@
     }
 
     function refreshPage() {
-
-        if (refresh_active)
+        //just for now
+        /*jshint noarg: false */
+        if (refresh_active) {
             return;
+        }
 
         refresh_active = true;
 
@@ -263,14 +266,14 @@
             });
         });
 
-        refresh.fadeIn(function(){
-            (function(){
+        refresh.fadeIn(function() {
+            (function() {
                 while (t-- > 0) {
                     refresh.find('.t').text(t);
-                    timeout = setTimeout(arguments.callee,1e3);
+                    timeout = setTimeout(arguments.callee, 1e3);
                     return;
                 }
-                $('.feed').add(refresh).fadeOut(function(){
+                $('.feed').add(refresh).fadeOut(function() {
                     window.location.reload(true);
                 });
             })();
@@ -281,8 +284,9 @@
     function getHash() {
         try {
             var hash = window.location.hash.substring(1);
-            if (hash[0] === '%')
-                hash = unescape(hash);
+            if (hash[0] === '%') {
+                hash = decodeURI(hash);
+            }
             return JSON.parse(hash);
         }
         catch (e) {
@@ -297,7 +301,8 @@
     function updateHash() {
 
         for (var i = 0; i < feeds.length; i++) {
-            var obj = $('#'+feeds[i].channel+'-feed');
+            var obj = $('#' + feeds[i].channel + '-feed');
+
             if (!obj.length) {
                 feeds.splice(i,1);
                 continue;
@@ -321,9 +326,7 @@
                 feeds.push(feeds.splice(i, 1)[0]);
             }
 
-            $('#' + feeds[i].channel + '-feed')
-                .css('z-index', i+1 * 100)
-                .removeClass('active');
+            $('#' + feeds[i].channel + '-feed').css('z-index', i+1 * 100).removeClass('active');
         }
 
         $('#' + feeds[i - 1].channel + '-feed').addClass('active');
@@ -348,7 +351,7 @@
             // rough approximation of a unix timestamp signature.
             // should match both with and without millis.
             data = data.replace(/\b13\d{8,11}\b/, function (d) {
-                return '"'+new Date(d.substring(0,10)*1000)+'"';
+                return '"' + new Date(d.substring(0,10)*1000) + '"';
             }).split(/\s*\n+/).filter(function(l) {return l;});
             cache[channel] = cache[channel].concat(data);
         }
@@ -362,14 +365,14 @@
                 }
             }
 
-            pre.text(ret.join("\n")+"\n");
+            pre.text(ret.join('\n')+'\n');
 
             if (regex_changed) {
                 pre.scrollTop(99999);
             }
         }
         else {
-            pre.text(cache[channel].join("\n")+"\n");
+            pre.text(cache[channel].join('\n') + '\n');
         }
 
     }
@@ -396,7 +399,7 @@
         feeddiv
             .hide()
             .draggable({
-                handle: "nav",
+                handle: 'nav',
                 containment: feed_container,
                 stop: function() {
                     updateHash();
@@ -490,8 +493,8 @@
 
             feedli.removeClass('active');
 
-            socket.emit("unsubscribe", feed.channel+":raw");
-            socket.removeListener(feed.channel+":raw", function(data) { feeddiv.find('pre').append(data); });
+            socket.emit('unsubscribe', feed.channel + ':raw');
+            socket.removeListener(feed.channel + ':raw', function(data) { feeddiv.find('pre').append(data); });
             feeddiv.remove();
 
             updateHash();
@@ -529,7 +532,7 @@
 
                 if (save) {
                     var expire = Date.now()+(60*60*24*365); // a year
-                    document.cookie = "terminal_color="+TERMINAL_COLOR+";max-age="+expire+";";
+                    document.cookie = 'terminal_color=' + TERMINAL_COLOR + ';max-age=' + expire + ';';
                 }
             }
         }
@@ -537,10 +540,21 @@
 
         $(canvas)
             .on('selectstart', function(e) { e.preventDefault(); }) // prevent cursor change on drag
-            .mousedown(function(e) { down = true; })
-            .mousemove(function(e) { if (down) update_color(e.offsetX, e.offsetY); })
-            .mouseup(function(e) { down = false; update_color(e.offsetX, e.offsetY, true); })
-            .mouseout(function(e) { down = false; })
+            .mousedown(function(e) {
+                down = true;
+            })
+            .mousemove(function(e) {
+                if (down) {
+                    update_color(e.offsetX, e.offsetY);
+                }
+            })
+            .mouseup(function(e) {
+                down = false;
+                update_color(e.offsetX, e.offsetY, true);
+            })
+            .mouseout(function(e) {
+                down = false;
+            })
             .data('context', 'color-picker')
             .appendTo(document.body);
 
@@ -641,17 +655,14 @@
             }
         });
 
-        input
-            .click(function(e){
-                e.preventDefault();
-                e.stopImmediatePropagation();
-            })
-            .keyup(function(e){
-                lis.show()
-                    .filter(function(i, el){
-                        return $(el).text().toLowerCase().indexOf(e.target.value.toLowerCase()) === -1;
-                    }).hide();
-            });
+        input.click(function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }).keyup(function(e) {
+            lis.show().filter(function(i, el){
+                return $(el).text().toLowerCase().indexOf(e.target.value.toLowerCase()) === -1;
+            }).hide();
+        });
 
     })();
 
