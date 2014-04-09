@@ -57,7 +57,7 @@
   var socket = io.connect("http://<%= host %>"),
     loggit = function(data) { console.log("got data:", data); };
 
-  // subscribe and bind events to new data
+  // subscribe and bind events to new data 
   socket.emit("subscribe", "<%= dirs[0] %>:json");
   socket.emit("subscribe", "<%= dirs[1] %>:raw");
 
@@ -79,7 +79,7 @@
         <h2>Feed List</h2>
 
         <% if (dirs && dirs.length) { %>
-
+          
           <% dirs.forEach(function(dir) { %>
 
             <div class="row">
@@ -97,7 +97,7 @@
       <hr>
 
       <footer>
-        <p>&copy; 2012 Vimeo, LLC</p>
+        <p>&copy; Vimeo 2012</p>
       </footer>
 
     </div> <!-- /container -->
@@ -134,9 +134,6 @@
 
           function append_data(data) {
 
-            // sanitize it
-            data = new Option(data).innerHTML;
-
             feed_data.append(data);
 
             lines = feed_data.text().split(/\n+/);
@@ -145,14 +142,14 @@
             if (lines.length > 1000) {
               feed_data.text(lines.slice(-1000).join("\n")+"\n");
             }
-
+              
             if (feed_data.data('autoscroll')) {
               // auto scroll to the bottom unless user intervention
               feed_data.scrollTop(99999);
             }
 
           }
-
+  
           if (channel in subscribed) {
             socket.emit('unsubscribe', channel);
             socket.removeListener(channel, append_data);

@@ -1,18 +1,28 @@
 #!/usr/bin/env coffee
 
-# config
-env = process.env
-
+env     = process.env
 fs 		= require "fs"
 express	= require "express"
-app		= express()
-server  = app.listen(env.TAILGATE_HTTP_PORT)
-io 		= require("socket.io").listen(server)
 spawn	= require("child_process").spawn
 crypto  = require "crypto"
-sprintf = require('sprintf').sprintf
+app		= express()
+
+if env.SSL_KEY_FILE?
+	server = require("https").createServer(
+		key:  fs.readFileSync(env.SSL_KEY_FILE,  'utf8')
+		cert: fs.readFileSync(env.SSL_CRT_FILE, 'utf8')
+		ca:   fs.readFileSync(env.SSL_BUNDLE_FILE, 'utf8')
+	, app).listen(env.TAILGATE_HTTPS_PORT)
+else
+	server = app.listen(env.TAILGATE_HTTP_PORT)
+
+io = require("socket.io").listen(server)
 
 HOUR_IN_MILLIS = 60*60e3
+
+if env.AUTH_TYPE is "ldap"
+	ldap 	= require "ldapjs"
+	sprintf = require('sprintf').sprintf
 
 log4js = require "log4js"
 log = log4js.getLogger()
@@ -26,13 +36,9 @@ else
 
 log.info "Starting up Tailgate.."
 
-if env.AUTH_TYPE is "ldap"
-	ldap 	= require "ldapjs"
-
-SALT = crypto.randomBytes 256
 
 # set up static content
-app.use "/js", express.static(env.TAILGATE_WEB_DIR+"/js");
+app.use "/js",  express.static(env.TAILGATE_WEB_DIR+"/js");
 app.use "/css", express.static(env.TAILGATE_WEB_DIR+"/css");
 app.use "/img", express.static(env.TAILGATE_WEB_DIR+"/img");
 
@@ -43,16 +49,21 @@ app.set "view options", "layout": false
 app.use express.favicon(env.TAILGATE_WEB_DIR+"/favicon.ico", { maxAge: 2592000000 })
 
 requestAuth = (res) ->
-	res.set "WWW-Authenticate": 'Basic realm="Tailgate Authentication"'
+	res.set "WWW-Authenticate", 'Basic realm="Tailgate Authentication"'
 	res.send 401
 
+
 # hash the passwords stored in memory
+SALT = crypto.randomBytes 256
 genPass = (password) ->
 	sha = crypto.createHmac('sha256', SALT)
 	sha.update(password)
 	return sha.digest('hex')
 
 authCheck = (req, res, next) ->
+
+	if env.SSL_CERT_FILE? and not req.secure
+		return res.redirect("https://"+req.host+":"+env.TAILGATE_HTTPS_PORT+"/"+req.url)
 
 	if env.AUTH_TYPE is "none"
 	  return next()
@@ -72,7 +83,7 @@ authCheck = (req, res, next) ->
 simpleAuth = (req, res, next) ->
 
 	unless env.SIMPLE_USERNAME and env.SIMPLE_PASSWORD
-		res.send "Authentication required but not defined in config!", 403
+		res.send 403, "Authentication required but not defined in config!"
 
 	if req.username is env.SIMPLE_USERNAME and req.password is env.SIMPLE_PASSWORD
 		return next()
@@ -233,15 +244,15 @@ class Tailer
 		# @todo clean this up a lil
 		unless env.TAILER is "dev"
 			try
-			  unless (fs.statSync path).isDirectory()
-			  	log.warn path+" is not a valid directory"
-			  	return
+				unless fs.statSync(path).isDirectory()
+					log.warn path+" is not a valid directory"
+					return
 
-			  file = sprintf "%s/"+env.TAILGATE_DATA_LOG, path, dir
+				file = sprintf "%s/"+env.TAILGATE_DATA_LOG, path, dir
 
-			  unless (fs.statSync file).isFile()
-			  	log.warn file+" is not a valid file"
-			  	return
+				unless fs.statSync(file).isFile()
+					log.warn file+" is not a valid file"
+					return
 			catch e
 				log.error e.toString()
 				return
@@ -325,7 +336,7 @@ class Tailer
 			self = @
 			timeout = setInterval(() ->
 				a = ""
-				a += JSON.stringify([Date.now(),'<script>alert(1)</script>&<&>', Math.random(), "data data data", crypto.randomBytes 100])+"\n" while Math.random() > .2
+				a += JSON.stringify([Date.now(),'<b style="color:red !important">alert(1)<\/b>&<&>', Math.random(), "data data data", crypto.randomBytes 15])+"\n" while Math.random() > .2
 				callback a
 			, 2e3)
 			return {
@@ -373,5 +384,6 @@ io.sockets.on "connection", (sock) ->
 	sock.on "disconnect", () ->
 		clearInterval timeout
 		tailer.removeListener sock
+
 
 

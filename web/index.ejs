@@ -1,87 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Vimeo - Tailgate</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
+    <head>
+        <meta charset="utf-8">
+        <title>Vimeo - Tailgate</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
-		<!-- Le styles -->
-		<link href="/css/bootstrap.min.css" rel="stylesheet">
-		<link href="/css/jquery-ui-1.8.18.custom.css" rel="stylesheet">
-		<link href="/css/monitor.css" rel="stylesheet">
+        <!-- Le styles -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/jquery-ui-1.8.18.custom.css" rel="stylesheet">
+        <link href="/css/monitor.css" rel="stylesheet">
+</head>
+<body>
+    <div id="nav_bar" class="navbar navbar-fixed-top">
+        <div class="navbar-inner clearfix">
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li>
+                        <a href="/">
+                            <img src="/img/vimeo_light_sm.png" class="v_logo">
+                            Tailgate
+                            <span id="connection" class="connection_status" title="Connected"></span>
+                            <span class="data_received"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div><!--/.nav-collapse -->
+            <div id="nav-buttons">
+                <div id="tile-chooser" class="tile-chooser">
+                    <div class="fullscreen tile" data-pref="fullscreen">
+                        <span></span>
+                    </div>
+                    <div class="horizontal-split tile" data-pref="horizontal">
+                        <span></span>
+                    </div>
+                    <div class="vertical-split tile" data-pref="vertical">
+                        <span></span>
+                    </div>
+                    <div class="four-split tile" data-pref="four">
+                        <span></span>
+                    </div>
+                    <div id="color-picker" class="color-picker tile">
+                        <a class="dropdown-toggle" href="javascript:void(0)" data-context="color-picker">T</a>
+                    </div>
+                </div>
+                <div id="add-feed" class="btn-group">
+                    <button class="btn-inverse dropdown-toggle" data-toggle="dropdown">
+                        Add a feed
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <input autofocus="true" />
+                        <% if (dirs && dirs.length) { %>
+                            <% dirs.forEach(function(dir) { %>
+                                <li><a href="#<%= dir %>"><%= dir %></a></li>
+                            <% }) %>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<body>
+    <div id="feeds" class="feed_container">
 
-		<div id="status_symbols">
-			Connected: <span class="connected"></span><br>
-			Data: <span class="data_received"></span>
-		</div>
+    </div>
 
-		<div class="navbar navbar-fixed-top">
+    <footer>
+        <p>
+            <a href="https://github.vimeows.com/Vimeo/tailgate/graphs/contributors">Contributors</a>
+            &bull; <a href="https://github.vimeows.com/Vimeo/tailgate">Repository</a>
+            &bull; <a href="/api">API</a>
+            <p class="copy">&copy; Vimeo <%= new Date().getFullYear() %></p>
+        </p>
+    </footer>
 
-			<div id="nav-buttons">
-				<div id="add-feed" class="btn-group">
-					<button class="btn-inverse dropdown-toggle" data-toggle="dropdown">
-						Add a feed
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu">
-						<input autofocus="true" />
-						<% if (dirs && dirs.length) { %>
-							<% dirs.forEach(function(dir) { %>
-								<li><a href="#<%= dir %>"><%= dir %></a></li>
-							<% }) %>
-						<% } %>
-					</ul>
-				</div>
-				<div id="color-picker" class="btn-group">
-					<a class="btn-mini btn-inverse dropdown-toggle" href="#">Color</a>
-				</div>
-			</div>
+    <div id="refresh" class="alert alert-info">
+        <a href="#" class="close">&times;</a>
+        Refreshing page in <span class="t">10</span> seconds...<br>
+    </div>
 
+    <script src="/js/jquery.1.7.2.min.js"></script>
+    <script src="/js/jquery-ui.1.8.18.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/monitor.js"></script>
+</body>
 
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="/">
-						<img src="/img/vimeo_light_sm.png" style="margin-right:4px" style="margin:0 4px">
-						Tailgate
-					</a>
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li><a href="/api">API</a></li>
-							<li><a href="<%= repo %>">Repository</a></li>
-						</ul>
-					</div><!--/.nav-collapse -->
-				</div>
-			</div>
-		</div>
-
-
-		<footer>
-			<p>&copy; 2012 Vimeo, LLC</p>
-		</footer>
-
-		<div id="refresh" class="alert alert-info">
-			<a href="#" class="close">&times;</a>
-			Refreshing page in <span class="t">10</span> seconds...<br>
-		</div>
-
-	</body>
-
-	<script src="/js/jquery.1.7.2.min.js"></script>
-	<script src="/js/jquery-ui.1.8.18.min.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="/js/monitor.js"></script>
-	<script>
-	</script>
 </html>
 
 

@@ -11,16 +11,16 @@
     "url" : "git@github.com:vimeo/tailgate.git"
   },
 
-  "engine": "node >= 0.6",
+  "engine": "node >= 0.10",
 
   "dependencies": {
-    "coffee-script": "1.3.3",
-    "socket.io": "0.9.10",
-    "express": "3.0",
-    "ejs": "0.8.1",
-    "ldapjs": "0.5.4",
-    "sprintf": "0.1.1",
-    "log4js": "0.5.2"
+    "coffee-script": "1.6.3",
+    "socket.io": "0.9.16",
+    "express": "3.4.2",
+    "ejs": "0.8.4",
+    "ldapjs": "0.6.3",
+    "sprintf": "0.1.3",
+    "log4js": "0.6.9"
   }
 }
 

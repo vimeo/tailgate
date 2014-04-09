@@ -13,7 +13,7 @@ PIDFILE=$TAILGATE_DIR/startup/tailgate.pid
 # path needed for node and npm
 export PATH="/usr/local/bin:$PATH"
 
-# grab pid
+# grab pid 
 PID=$(cat $PIDFILE 2> /dev/null)
 
 start() {
@@ -23,7 +23,7 @@ start() {
                 echo "Starting Tailgate..."
                 cd $TAILGATE_DIR
 
-                sudo -u $TAILGATE_USER -b $TAILGATE_SCRIPT > /dev/null 2>&1 &
+                sudo -u $TAILGATE_USER -b $TAILGATE_SCRIPT &> /dev/null &
         fi
 }
 stop() {
