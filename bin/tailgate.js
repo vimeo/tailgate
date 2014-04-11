@@ -71,7 +71,6 @@
         res.send(401);
     }
 
-
     // hash the passwords stored in memory
     function genPass(password) {
         sha = crypto.createHmac('sha256', SALT);

@@ -20,3 +20,6 @@ until "$TAILGATE_DIR/bin/tailgate.js" ; do
         echo "Tailgate crashed with exit code $?. Restarting." >&2
         sleep 1
 done
+
+#nodeinspector
+# node --debug-brk "$TAILGATE_DIR"/bin/tailgate.js

@@ -118,7 +118,6 @@ Tailer.prototype.removeListener = function(sock, channel_name) {
 
 
 Tailer.prototype.register = function(dir, format) {
-
     // track refs so we know when to kill the tail process
     this.refs[dir] = this.refs[dir] ? this.refs[dir] + 1 : 1;
 
@@ -152,15 +151,15 @@ Tailer.prototype.register = function(dir, format) {
         return true;
     }
 
-    tail = this.tailer_functions[env.TAILER];
+    tail = this.tailer_functions[env.TAILER].bind(self);
 
     this.tailers[dir] = tail(file, function(data) {
-        for (var transform in self.formats) {
-            if (self.formats.hasOwnProperty(transform)) {
-                var channel = dir + ':' + transform;
+        for (var format in self.formats) {
+            if (self.formats.hasOwnProperty(format)) {
+                var channel = dir + ':' + format;
 
                 if (self.listeners[channel]) {
-                    var tdata = self.formats[transform](data);
+                    var tdata = self.formats[format](data);
 
                     for (var sock in self.listeners[channel]) {
                         if (self.listeners[channel].hasOwnProperty(sock)) {
@@ -254,9 +253,8 @@ Tailer.prototype.tailer_functions = {
             var a = '';
 
             while (Math.random() > 0.2) {
-                a += JSON.stringify([new Date.getTime(), '<b style="color:red !important">alert(1)<\/b>&<&>', Math.random(), 'data data data', crypto.randomBytes(15)]) + '\n';
+                a += JSON.stringify([new Date().getTime(), '<b style="color:red !important">alert(1)<\/b>&<&>', Math.random(), 'data data data', crypto.randomBytes(15)]) + '\n';
             }
-
             callback(a);
         }, 2e3);
 
